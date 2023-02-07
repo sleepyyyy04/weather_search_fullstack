@@ -1,0 +1,419 @@
+<div>
+  <div class="all-div">
+    <div id="search-part">
+      <h2 class="col-md-12 search-head">Weather Search🌤️</h2>
+      <br>
+      <form role="form" class="col-md-12" style="margin: 0 auto" id="myForm" (ngSubmit)="onSubmit()" >
+        <fieldset [disabled]="getLock">
+          <div class="form-group row">
+            <label for="street" class="text-left col-3 mb-1">Street<span class="star-label">*</span></label>
+            <div class="col-md-9">
+              <input [ngClass]="{'is-invalid': validshow && street.invalid && (street.dirty || street.touched)}"
+                     [(ngModel)]="searchForm.street" id="street" name="street"
+                     class="form-control" type="text" required #street="ngModel">
+              <div id="street-alert" class="invalid-feedback text-left" *ngIf="disshow">Please enter a valid street.</div>
+
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="city" class="text-left col-3 mb-1">City<span class="star-label">*</span></label>
+            <div class="col-md-9">
+              <input name="city" value="" required
+                     [ngClass]="{'form-control': true, 'is-invalid': validshow && city.invalid && (city.dirty || city.touched)}"
+                     id="city" type="text" name="city"
+                     matInput
+                     [matAutocomplete]="auto"
+                     ngModel #city="ngModel" (ngModelChange)="getAuto(city.value)" >
+              <mat-autocomplete id="auto-id" #auto="matAutocomplete">
+                <mat-option *ngFor="let option of autocity" [value]="option" (click)="onselect(option)">{{option}}</mat-option>
+              </mat-autocomplete>
+              <div id="city-alert" class="invalid-feedback text-left" *ngIf="disshow">Please enter a valid city.</div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="state" class="text-left col-3 mb-1">State</label>
+            <div class="col-md-4">
+              <select [(ngModel)]="searchForm.state" class="form-control" name="state" id="state"
+                      style="border-radius: 5px; appearance: none;">
+                <option value="" disabled selected>Select your state</option>
+                <option value="AL">Alabama</option>
+                <option value="AK">Alaska</option>
+                <option value="AZ">Arizona</option>
+                <option value="AR">Arkansas</option>
+                <option value="CA">California</option>
+                <option value="CO">Colorado</option>
+                <option value="CT">Connecticut</option>
+                <option value="DE">Delaware</option>
+                <option value="FL">Florida</option>
+                <option value="GA">Georgia</option>
+                <option value="HI">Hawaii</option>
+                <option value="ID">Idaho</option>
+                <option value="IL">Illinois</option>
+                <option value="IN">Indiana</option>
+                <option value="IA">Iowa</option>
+                <option value="KS">Kansas</option>
+                <option value="KY">Kentucky</option>
+                <option value="LA">Louisiana</option>
+                <option value="ME">Maine</option>
+                <option value="MD">Maryland</option>
+                <option value="MA">Massachusetts</option>
+                <option value="MI">Michigan</option>
+                <option value="MN">Minnesota</option>
+                <option value="MS">Mississippi</option>
+                <option value="MO">Missouri</option>
+                <option value="MT">Montana</option>
+                <option value="NE">Nebraska</option>
+                <option value="NV">Nevada</option>
+                <option value="NH">New Hampshire</option>
+                <option value="NJ">New Jersey</option>
+                <option value="NM">New Mexico</option>
+                <option value="NY">New York</option>
+                <option value="NC">North Carolina</option>
+                <option value="ND">North Dakota</option>
+                <option value="OH">Ohio</option>
+                <option value="OK">Oklahoma</option>
+                <option value="OR">Oregon</option>
+                <option value="PA">Pennsylvania</option>
+                <option value="RI">Rhode Island</option>
+                <option value="SC">South Carolina</option>
+                <option value="SD">South Dakota</option>
+                <option value="TN">Tennessee</option>
+                <option value="TX">Texas</option>
+                <option value="UT">Utah</option>
+                <option value="VT">Vermont</option>
+                <option value="VA">Virginia</option>
+                <option value="WA">Washington</option>
+                <option value="WV">West Virginia</option>
+                <option value="WI">Wisconsin</option>
+                <option value="WY">Wyoming</option>
+              </select>
+            </div>
+          </div>
+        </fieldset>
+        <div>
+          <div class="line-part"></div>
+        </div>
+        <br>
+        <div class="form-group row">
+          <div class="text-left col-3 mb-1" style="white-space: nowrap">Auto-detect location
+            <span class="star-label">*</span></div>
+          <div class="col-md-9">
+            <div class="form-check text-left">
+              <input type="checkbox" class="form-check-input" value="0" id="checkbox-ok" (click)="autoDetect()">
+              <label class="form-check-label" for="checkbox-ok">Current Location</label>
+            </div>
+          </div>
+        </div>
+
+        <div style="text-align: left; padding-left: 2%">
+          <button id="search-btn" type="button" class="btn btn-primary" value="SUBMIT"
+                  [disabled]="!(getLocation || (street.valid && city.valid))" (click)="onSubmit()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+              <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+            </svg>
+            Search
+          </button>
+          <button type="reset"  class="btn btn-outline-dark" value="CLEAR" (click)="resetc()"
+                  style="margin-left: 3%">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list-nested" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M4.5 11.5A.5.5 0 0 1 5 11h10a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zm-2-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm-2-4A.5.5 0 0 1 1 3h10a.5.5 0 0 1 0 1H1a.5.5 0 0 1-.5-.5z"/>
+            </svg>
+            Clear
+          </button>
+        </div>
+
+      </form>
+      <br>
+    </div>
+    <br>
+
+    <div id="results-favorites">
+      <ul class="nav nav-pills"  style="padding-left: 40%" role="tablist">
+        <li class="nav-item">
+          <a class="nav-link active" id="a-result" href="#result-card" data-toggle="pill">Results</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="a-favorite" href="#favorite-card" data-toggle="pill" (click)="inFavorite()">Favorites</a>
+        </li>
+      </ul>
+      <div class="tab-content">
+<!-- results card     -->
+        <div id="result-card" class="container tab-pane active">
+          <!--search result form        -->
+          <div class="tab-content" @flyInOut *ngIf="showcontent">
+            <div *ngIf="showcontentin&&!noResult">
+              <br>
+              <h2 id="results-header" class="col-md-12 search-head" style="margin: 0 auto;
+          text-align: center">{{head}}</h2>
+              <div id="mobile-result" style="width: 80%; margin: 0 auto; text-align: center">
+                <br>
+                <br>
+                <div style="text-align: right">
+                  <button type="button" class="btn btn-outline star-favo" style="width: 40px; height: 35px"
+                          *ngIf="!isFavorite" (click)="addFavorite()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star" viewBox="0 0 16 16">
+                      <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z"/>
+                    </svg>
+                  </button>
+                  <button type="button" class="btn btn-outline star-favo" style="width: 40px; height: 35px"
+                          *ngIf="isFavorite" (click)="deleteFavorite()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16" color="#f8d556">
+                      <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"></path>
+                    </svg>
+                  </button>
+                  <button class="btn btn-link detail-tag" [disabled]="detailButton" (click)="backDetail()">Details
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                      <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+                    </svg>
+                  </button>
+                </div>
+                <br>
+                <!--  3 tab card-->
+                <div>
+                  <ul class="nav nav-tabs justify-content-end nav-self">
+                    <li class="nav-item">
+                      <a class="nav-link a-nav-self active" href="#menu1" data-toggle="tab">Day View</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link a-nav-self" href="#menu2" data-toggle="tab">Daily Temp.Chart</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link a-nav-self" href="#menu3" data-toggle="tab">Meteogram</a>
+                    </li>
+                  </ul>
+                  <br>
+                  <div class="tab-content text-left">
+                    <div id="menu1" class="container tab-pane active" style="padding: 0">
+                      <table class="table table-hover table-responsive-sm" id="search-result">
+                        <thead>
+                        <tr>
+                          <th scope="col">#</th>
+                          <th scope="col">Date</th>
+                          <th scope="col">Status</th>
+                          <th scope="col">Temp. High (°F)</th>
+                          <th scope="col">Temp. Low (°F)</th>
+                          <th scope="col">Wind Speed (mph)</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let d of date, let i = index">
+                          <th scope="row">{{i+1}}</th>
+                          <td class="text-blue" (click)="getDetail(i)">{{d}}</td>
+                          <td>
+                            <img width="30px" src="{{pics[i]}}">
+                            <span>{{picsName[i]}}</span>
+                          </td>
+                          <td>{{highT[i]}}</td>
+                          <td>{{lowT[i]}}</td>
+                          <td>{{windS[i]}}</td>
+                        </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div id="menu2" class="container tab-pane">
+                      <highcharts-chart
+                        [Highcharts]="Highcharts"
+                        [options]="chartOptions1"
+                        style="width: 100%; height: 400px; display: block;"
+                      ></highcharts-chart>
+
+                    </div>
+                    <div id="menu3" class="container tab-pane" style="text-align: center">
+                      <highcharts-chart
+                        [Highcharts]="Highcharts"
+                        [options]="chartOptions2"
+                        style="width: 100%; height: 400px; display: block;"
+                      ></highcharts-chart>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+          <div id="detail-card" @flyInOut2 *ngIf="showDetail">
+            <br>
+            <h2 id="detail-header" class="col-md-12 search-head" style="margin: 0 auto;
+                text-align: center">{{ddate}}</h2>
+            <br>
+            <div>
+              <div style="text-align: left; float: left">
+                <button type="button" class="btn btn-outline-dark" (click)="backList()">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16" style="color: black">
+                    <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"></path>
+                  </svg>
+                  List
+                </button>
+              </div>
+              <div style="text-align: right; float: right">
+                <button type="button" class="btn btn-primary" (click)="openTweet()">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-twitter" viewBox="0 0 16 16">
+                    <path d="M5.026 15c6.038 0 9.341-5.003 9.341-9.334 0-.14 0-.282-.006-.422A6.685 6.685 0 0 0 16 3.542a6.658 6.658 0 0 1-1.889.518 3.301 3.301 0 0 0 1.447-1.817 6.533 6.533 0 0 1-2.087.793A3.286 3.286 0 0 0 7.875 6.03a9.325 9.325 0 0 1-6.767-3.429 3.289 3.289 0 0 0 1.018 4.382A3.323 3.323 0 0 1 .64 6.575v.045a3.288 3.288 0 0 0 2.632 3.218 3.203 3.203 0 0 1-.865.115 3.23 3.23 0 0 1-.614-.057 3.283 3.283 0 0 0 3.067 2.277A6.588 6.588 0 0 1 .78 13.58a6.32 6.32 0 0 1-.78-.045A9.344 9.344 0 0 0 5.026 15z"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <br>
+            <br>
+            <br>
+            <table class="table table-striped" id="detail-table">
+              <tbody style="text-align: left">
+              <tr>
+                <th scope="row" class="col-4">Status</th>
+                <td>{{dstatus}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Max Temperature</th>
+                <td>{{dmaxT}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Min Temperature</th>
+                <td>{{dminT}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Apparent Temperature</th>
+                <td>{{dapparentT}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Sun Rise Time</th>
+                <td>{{dsunR}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Sun Set Time</th>
+                <td>{{dsunS}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Humidity</th>
+                <td>{{dhumidity}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Wind Speed</th>
+                <td>{{dwindS}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Visibility</th>
+                <td>{{dvisi}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Moon Phase</th>
+                <td>{{dmoon}}</td>
+              </tr>
+              <tr>
+                <th scope="row">Cloud Cover</th>
+                <td>{{dcloud}}</td>
+              </tr>
+              </tbody>
+            </table>
+            <br>
+            <!--google map-->
+            <div>
+              <agm-map [latitude]="lat_num" [longitude]="lon_num"
+                       [zoom]="15" style="height: 800px">
+                <agm-marker [latitude]="lat_num" [longitude]="lon_num" [label]="'A'"></agm-marker>
+              </agm-map>
+            </div>
+          </div>
+          <br>
+          <br>
+          <div class="alert alert-danger" *ngIf="noResult">
+            An error occurred please try again later
+          </div>
+        </div>
+<!--favorite card    -->
+        <div id="favorite-card" class="container tab-pane"  style="width: 80%; margin: 0 auto;text-align: left">
+          <br>
+          <br>
+          <br>
+          <div>
+            <table class="table table-hover table-responsive-sm" id="favorite" *ngIf="haveFavorite&&favoriteDetail">
+              <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">City</th>
+                <th scope="col">State</th>
+                <th scope="col"></th>
+              </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let d of localCity, let i = index">
+                  <th scope="row">{{i+1}}</th>
+                  <td class="text-blue" (click)="freshDetail(i)">{{localCity[i]}}</td>
+                  <td class="text-blue" (click)="freshDetail(i)">{{localState[i]}}</td>
+                  <td>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                         class="bi bi-trash-fill" viewBox="0 0 16 16" (click)="trashFavorite(i)" style="cursor: pointer">
+                      <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+                    </svg>
+                  </td>
+                </tr>
+
+              </tbody>
+            </table>
+            <div *ngIf="!favoriteDetail">
+              <br>
+              <h2 id="results-header2" class="col-md-12 search-head" style="margin: 0 auto;
+          text-align: center">{{fhead}}</h2>
+              <br>
+              <div style="text-align: left; float: left">
+                <button type="button" class="btn btn-outline-dark" (click)="backtoFavorite()">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16" style="color: black">
+                    <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"></path>
+                  </svg>
+                  Back to Favorite
+                </button>
+              </div>
+              <br>
+              <br>
+              <div style=" margin: 0 auto; text-align: left">
+                <br>
+                <table class="table table-hover table-responsive-sm" id="search-result2">
+                  <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Temp. High (°F)</th>
+                    <th scope="col">Temp. Low (°F)</th>
+                    <th scope="col">Wind Speed (mph)</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr *ngFor="let d of fdate, let i = index">
+                    <th scope="row">{{i+1}}</th>
+                    <td>{{d}}</td>
+                    <td>
+                      <img width="15%" src="{{fpics[i]}}">
+                      <span>{{fpicsName[i]}}</span>
+                    </td>
+                    <td>{{fhighT[i]}}</td>
+                    <td>{{flowT[i]}}</td>
+                    <td>{{fwindS[i]}}</td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="alert alert-warning" role="alert" *ngIf="!haveFavorite">
+              <b>Sorry!</b> No records found.
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <br>
+      <br>
+      <br>
+      <!--pregress bar-->
+      <div class="progress progress-barstyle" *ngIf="showbar" style="width: 70%">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%"></div>
+      </div>
+    <br>
+    <br>
+    <br>
+
+    </div>
+
+  </div>
+</div>
